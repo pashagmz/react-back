@@ -4,9 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +17,12 @@ public class Module extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    private Code code;
+
+    public enum Code {
+        USER_MANAGEMENT
+    }
 
 }

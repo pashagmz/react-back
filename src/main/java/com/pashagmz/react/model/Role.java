@@ -3,10 +3,10 @@ package com.pashagmz.react.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role extends BaseEntity {
+public class Role extends BaseEntity implements GrantedAuthority {
 
     private static final long serialVersionUID = -67142681348605707L;
 
@@ -28,8 +28,9 @@ public class Role extends BaseEntity {
     @JsonIgnore
     @Getter(onMethod = @__(@JsonProperty))
     @Setter(onMethod = @__(@JsonIgnore), value = AccessLevel.PRIVATE)
+    @Enumerated(EnumType.STRING)
     @Column(name = "code", nullable = false, updatable = false)
-    private String code;
+    private Code code;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_permissions",
@@ -39,14 +40,19 @@ public class Role extends BaseEntity {
     @Fetch(FetchMode.SUBSELECT)
     private Set<Permission> permissions;
 
+    public enum Code {
+        ADMIN,
+        USER
+    }
+
 
     public void setName(String name) {
         this.name = name;
+    }
 
-        if (StringUtils.isNoneBlank(name) && StringUtils.isEmpty(code)) {
-            String code = StringUtils.replacePattern(name, "\\s+", "_");
-            this.code = StringUtils.upperCase(code);
-        }
+    @Override
+    public String getAuthority() {
+        return "ROLE_" + this.code.toString();
     }
 
 }

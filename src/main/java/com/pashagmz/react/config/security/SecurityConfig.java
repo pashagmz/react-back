@@ -44,7 +44,7 @@ public class SecurityConfig {
                     .authorizeRequests()
                     .antMatchers(LOGIN_PAGE_URL).permitAll()
                     .antMatchers(ALL_URL).authenticated()
-                    .antMatchers(ALL_URL).hasAuthority("USER_MANAGEMENT_READ")
+                    .antMatchers(ALL_URL).hasAuthority("OP_USER_MANAGEMENT_READ")
 
 
                     .and()

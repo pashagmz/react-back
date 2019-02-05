@@ -3,15 +3,11 @@ package com.pashagmz.react.model;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -49,9 +45,12 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .flatMap(role -> role.getPermissions().stream().map(permission -> new SimpleGrantedAuthority(permission.getAuthority())))
-                .collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : roles) {
+            authorities.add(role);
+            authorities.addAll(role.getPermissions());
+        }
+        return authorities;
     }
 
     @Override
